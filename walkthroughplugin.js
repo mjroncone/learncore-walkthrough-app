@@ -1,12 +1,11 @@
 function walkthrough(elements){
   var ToolTip = {
-    "name" : "",
-    "color" : "black",
-    "bgcolor" : "white",
-    "text" : "",
+    name : "",
+    color : "black",
+    bgcolor : "white",
+    text : "",
   };
 
-  var elementArr = elements;
   var tooltipArray = [];
 
   elements.forEach(function(element) {
@@ -18,12 +17,13 @@ function walkthrough(elements){
   function initHighlight(element) {
     var focus = document.getElementById(element.name);
 
-    focus.style.transition = "all 1s linear";
+    focus.style.transition = "all 0.5s linear";
     focus.style.position = 'relative';
     focus.style.zIndex = 9999;
     focus.style.boxShadow = '0 0 0 9999px rgba(0, 0, 0, 0.5)';
 
+    initToolTip(element, focus);
   }
+
   initHighlight(tooltipArray.shift());
-  console.log(tooltipArray);
 }
