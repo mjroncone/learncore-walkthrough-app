@@ -31,19 +31,15 @@ function walkthrough(elements){
     var positionObj = {};
 
     var elementPos = focus.getBoundingClientRect();
-    var elementXPos = focus.offsetLeft;
-    var elementYPos = focus.offsetTop;
-    var elementWidth = focus.offsetWidth;
-    var elementHeight = focus.offsetHeight;
     var windowHorizontalMid = window.innerWidth / 2;
     var windowVerticalMid = window.innerHeight / 2;
 
     // determines if the element's origin is in the 2nd/3rd quadrants or 1st/4th
-    var originLeftQuads = elementXPos < windowHorizontalMid ? true : false;
+    var originLeftQuads = elementPos.left < windowHorizontalMid ? true : false;
     // determines if the element's origin is in the 1st/2nd quadrants or 3rd/4th
-    var originTopQuads = elementYPos < windowVerticalMid ? true : false;
+    var originTopQuads = elementPos.top < windowVerticalMid ? true : false;
     // determines if element is exclusive to the left quadrants (for entry on right)
-    var exclusiveLeftQuad =  elementXPos + elementWidth < windowVerticalMid ? true : false;
+    var exclusiveLeftQuad =  elementPos.right < windowHorizontalMid ? true : false;
 
     /*
       These conditionals use the quadrant information to assign x/y coordinates based
@@ -53,21 +49,22 @@ function walkthrough(elements){
       which avoids having infoboxes enter from the right for centered elements
       where their origin is in the left quadrants.
     */
+    // TODO: fix horizontal centering of box from top/bottom
     if (originLeftQuads && exclusiveLeftQuad) {
-      positionObj.x = elementXPos + elementWidth;
-      positionObj.y = elementYPos + elementHeight;
+      positionObj.x = elementPos.right;
+      positionObj.y = elementPos.top;
       positionObj.fromDirection = "right";
     } else if (!originLeftQuads) {
-      positionObj.x = elementXPos;
-      positionObj.y = elementYPos + elementHeight;
+      positionObj.x = elementPos.left;
+      positionObj.y = elementPos.top;
       positionObj.fromDirection = "left";
     } else if (originTopQuads) {
-      positionObj.x = elementXPos + elementWidth/2;
-      positionObj.y = elementYPos - elementHeight;
+      positionObj.x = elementPos.left + elementPos.width/2;
+      positionObj.y = elementPos.bottom;
       positionObj.fromDirection = "bottom";
     } else if (!originTopQuads) {
-      positionObj.x = elementXPos + elementWidth/2;
-      positionObj.y = elementYPos;
+      positionObj.x = elementPos.left + elementPos.width/2;
+      positionObj.y = elementPos.top;
       positionObj.fromDirection = "top";
     }
 
