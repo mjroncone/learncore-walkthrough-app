@@ -75,16 +75,24 @@ function walkthrough(elements){
   // wrapper function for toggling the highlighting styles and class
   function toggleHighlight(element) {
     var focus = document.getElementById(element.name);
+    var isHighlighted = focus.className.indexOf('highlighted') >= 0;
 
-    styleElement(focus);
-    initInfoBox(element);
+    if (isHighlighted) {
+      toggleElementStyles(focus);
+      focus.className = focus.className.replace(' highlighted', '');
+      removeInfoBox(element);
+    } else {
+      toggleElementStyles(focus);
+      focus.className += ' highlighted';
+      initInfoBox(element);
+    }
 
     // applies the styles needed to fade out everything except the element specified
-    function styleElement(focus) {
+    function toggleElementStyles(focus) {
       focus.style.transition = "all 0.5s linear";
-      focus.style.position = 'relative';
-      focus.style.zIndex = 9999;
-      focus.style.boxShadow = '0 0 0 9999px rgba(0, 0, 0, 0.5)';
+      focus.style.position = isHighlighted ? '' : 'relative';
+      focus.style.zIndex = isHighlighted ? '' : 9999;
+      focus.style.boxShadow = isHighlighted ? '' : '0 0 0 9999px rgba(0, 0, 0, 0.5)';
     }
   }
 
@@ -95,7 +103,7 @@ function walkthrough(elements){
     function createInfoBox(element) {
       var infoBoxDiv = document.createElement('div');
 
-      infoBoxDiv.className = element.name + ' infobox';
+      infoBoxDiv.id = element.name + '-info';
 
       infoBoxDiv.style.color = element.color;
       infoBoxDiv.style.backgroundColor = element.bgcolor;
@@ -103,6 +111,8 @@ function walkthrough(elements){
       infoBoxDiv.style.left = element.infoXPos + 'px';
       infoBoxDiv.style.top = element.infoYPos + 'px';
       infoBoxDiv.style.zIndex = 9999;
+      infoBoxDiv.style.margin = '15px';
+      infoBoxDiv.style.padding   = '15px';
 
       infoBoxDiv.innerHTML = '<p>' + element.text + '</p>';
 
@@ -114,5 +124,12 @@ function walkthrough(elements){
     }
   }
 
+  function removeInfoBox(element) {
+    var infoBoxDiv = document.getElementById(element.name + '-info');
+    infoBoxDiv.parentElement.removeChild(infoBoxDiv);
+  }
+
   toggleHighlight(highlightsArray.shift());
 }
+
+walkthrough([{id: 'css', text:'Im some text'}]);
