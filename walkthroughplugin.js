@@ -55,15 +55,18 @@ function walkthrough(elements){
   function initHighlight(element) {
     var focus = document.getElementById(element.name);
 
+    styleElement(focus);
+    initInfoBox(element);
+  }
+
+  function styleElement(focus) {
     focus.style.transition = "all 0.5s linear";
     focus.style.position = 'relative';
     focus.style.zIndex = 9999;
     focus.style.boxShadow = '0 0 0 9999px rgba(0, 0, 0, 0.5)';
-
-    initInfoBox(focus);
   }
 
-  function initInfoBox(element, focus) {
+  function initInfoBox(element) {
 
     function createInfoBox(element, focus) {
       var infoBoxHTML = '<div class="info-box ' + element.id + '"style="';
