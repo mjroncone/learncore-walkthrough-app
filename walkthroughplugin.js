@@ -125,12 +125,12 @@ function walkthrough(elements){
         infoBoxHTML = '<div><p>' + element.text + '</p></div><div>';
 
       if (highlightedArray.length > 0) {
-        infoBoxHTML += '<button id="previous" class="previous-btn">Previous</button>';
+        infoBoxHTML += '<button id="previous" class="previous-btn" style="float:left;">Previous</button>';
       }
       if (highlightsArray.length <= 1) {
         infoBoxHTML += '<button id="finish" class="finish-btn">Finished</button>';
       } else {
-        infoBoxHTML += '<button id="next" class="next-btn">Next</button>';
+        infoBoxHTML += '<button id="next" class="next-btn" style="float:right;">Next</button>';
       }
 
       infoBoxDiv.innerHTML = infoBoxHTML;
@@ -162,33 +162,40 @@ function walkthrough(elements){
     var input = message;
     var id = input.srcElement ? input.srcElement.id : input;
     var current = highlightsArray[0];
-    var previous = highlightedArray[highlightedArray.length - 1];
-
+    var next = highlightsArray[1];
+    var previous = highlightedArray[0];
 
     switch (id) {
 
       case ('next'):
-          // move the currently displayed box from the todo to done arrays;
-          if (highlightedArray.length > 0){
-              toggleHighlight(previous);
-          }
           toggleHighlight(current);
-          highlightedArray.push(highlightsArray.shift());
-          break;
+
+          highlightedArray.unshift(highlightsArray.shift());
+
+          toggleHighlight(next);
+        // move the currently displayed box from the todo to done arrays;
+
+        break;
 
       case ('previous'):
+        toggleHighlight(current);
+
+        highlightsArray.unshift(highlightedArray.shift());
+        
         toggleHighlight(previous);
-        highlightsArray.unshift(highlightedArray.pop());
-        toggleHighlight(highlightedArray[highlightedArray.length - 1]);
+        //toggleHighlight(highlightedArray[highlightedArray.length -1]);
         break;
 
       case ('finish'):
-        toggleHighlight(previous);
+        toggleHighlight(current);
         break;
+
+      case ('start'):
+        toggleHighlight(current);
     }
   }
 
-  changeHighlight('next');
+  changeHighlight('start');
 }
 
 walkthrough([{id: 'css', text:'Im some text'}, {id: 'html', text:'Im some html'}, {id : 'javascript', text: 'im some javascript'}]);
