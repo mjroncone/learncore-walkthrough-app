@@ -1,10 +1,10 @@
 function walkthrough(elements){
 
   /*
-    arrays will contain elOBjs, with highlightsArray being a todo list of sorts,
+    arrays will contain ElementObjects, with highlightsArray being a todo list of sorts,
     and highlightedArray a "done" list, so we can navigate back to them;
   */
-  var elObj = {};
+  var ElementObject = function() {};
   var highlightsArray = [];
   var highlightedArray = [];
 
@@ -13,16 +13,18 @@ function walkthrough(elements){
     necessary for initializing our infobox later
   */
   elements.forEach(function(element) {
-    elObj.name = element.id;
-    elObj.text = element.text;
+    var newElement = new ElementObject();
+    newElement.name = element.id;
+    newElement.text = element.text;
 
     // users can supply the following settings or use the default arrangements
-    elObj.color = element.color || "#000";
-    elObj.bgcolor = element.bgcolor || "#FFF";
-    elObj.infoXPos = element.xpos || calcPosition(element).x;
-    elObj.infoYPos = element.ypos || calcPosition(element).y;
-    elObj.fromDirection = element.fromDirection || calcPosition(element).fromDirection;
-    highlightsArray.push(elObj);
+    newElement.color = element.color || "#000";
+    newElement.bgcolor = element.bgcolor || "#FFF";
+    newElement.infoXPos = element.xpos || calcPosition(element).x;
+    newElement.infoYPos = element.ypos || calcPosition(element).y;
+    newElement.fromDirection = element.fromDirection || calcPosition(element).fromDirection;
+    highlightsArray.push(newElement);
+    console.log(highlightsArray);
   });
 
   /*
@@ -121,7 +123,7 @@ function walkthrough(elements){
       infoBoxDiv.style.maxWidth = "50%";
 
       var infoBoxHTML = '';
-      infoBoxHTML = '<div><p>' + element.text + '</p></div><div>';
+        infoBoxHTML = '<div><p>' + element.text + '</p></div><div>';
 
       if (highlightedArray.length > 0) {
         infoBoxHTML += '<button id="previous" class="previous-btn">Previous</button>';
@@ -139,6 +141,8 @@ function walkthrough(elements){
 
     function appendInfoBox(infoBoxDiv) {
       document.getElementsByTagName('body')[0].appendChild(infoBoxDiv);
+
+
     }
   }
 
@@ -148,13 +152,17 @@ function walkthrough(elements){
   }
 
   function changeHighlight(message) {
+    var id = message || this.id;
     var current, next;
 
-    switch (message) {
+    switch (id) {
+
       case ('next'):
+        // if this is the first element, bypass appending to past elements
         if (highlightedArray.length === 0) {
           toggleHighlight(highlightsArray[0]);
         } else {
+          // move the currently displayed box from the todo to done arrays;
           current = highlightsArray.shift();
           toggleHighlight(current);
           highlightedArray.push(current);
@@ -162,11 +170,13 @@ function walkthrough(elements){
           toggleHighlight(next);
         }
         break;
+
       case ('previous'):
         toggleHighlight(highlightsArray[0]);
         highlightsArray.unshift(highlightedArray.pop());
         changeHighlight('next');
         break;
+
       case ('finished'):
         toggleHighlight(highlightsArray[0]);
         break;
