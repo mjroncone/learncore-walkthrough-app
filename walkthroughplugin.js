@@ -112,7 +112,7 @@ function walkthrough(elements){
 
       infoBoxDiv.style.color = element.color;
       infoBoxDiv.style.backgroundColor = element.bgcolor;
-      infoBoxDiv.style.position = 'absolute';
+      infoBoxDiv.style.position = 'fixed';
       infoBoxDiv.style.left = element.infoXPos + 'px';
       infoBoxDiv.style.top = element.infoYPos + 'px';
       infoBoxDiv.style.zIndex = 9999;
@@ -124,21 +124,34 @@ function walkthrough(elements){
       var infoBoxHTML = '';
         infoBoxHTML = '<div><p>' + element.text + '</p></div><div>';
 
+      // adds a previous button if not on the first highlight
       if (highlightedArray.length > 0) {
         infoBoxHTML += '<button id="previous" class="previous-btn" style="float:left;">Previous</button>';
       }
+      // adds a finish button on the last highlight
       if (highlightsArray.length <= 1) {
-        infoBoxHTML += '<button id="finish" class="finish-btn">Finished</button>';
+        infoBoxHTML += '<button id="finish" class="finish-btn" style="float:right;">Finished</button>';
       } else {
         infoBoxHTML += '<button id="next" class="next-btn" style="float:right;">Next</button>';
       }
 
       infoBoxDiv.innerHTML = infoBoxHTML;
 
-      appendInfoBox(infoBoxDiv);
+      appendInfoBox(infoBoxDiv, element);
     }
 
-    function appendInfoBox(infoBoxDiv) {
+    /*
+      appends the box to the document and adds button event listeners
+
+      event listeners were necessary because the html tag onclick attr does not
+      have access to the changeHighlight function without adding to global
+      namespace
+
+      TODO: Figure out how to make infobox transitions on page load using element.fromDirection.
+      Previous attempts with css transform were being performed immediately with no
+      animation.
+    */
+    function appendInfoBox(infoBoxDiv, element) {
       document.getElementsByTagName('body')[0].appendChild(infoBoxDiv);
 
       if (document.getElementById('previous')) {
@@ -150,6 +163,7 @@ function walkthrough(elements){
       if (document.getElementById('finish')) {
         document.getElementById('finish').addEventListener('click', changeHighlight);
       }
+
     }
   }
 
@@ -158,6 +172,9 @@ function walkthrough(elements){
     infoBoxDiv.parentElement.removeChild(infoBoxDiv);
   }
 
+  /*
+    this function is used to cycle through which element is being highlighted
+  */
   function changeHighlight(message) {
     var input = message;
     var id = input.srcElement ? input.srcElement.id : input;
@@ -188,5 +205,3 @@ function walkthrough(elements){
 
   changeHighlight('start');
 }
-
-walkthrough([{id: 'css', text:'Im some text'}, {id: 'html', text:'Im some html'}, {id : 'javascript', text: 'im some javascript'}]);
