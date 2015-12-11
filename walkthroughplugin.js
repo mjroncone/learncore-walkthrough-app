@@ -1,7 +1,12 @@
 function walkthrough(elements){
 
+  /*
+    arrays will contain elOBjs, with highlightsArray being a todo list of sorts,
+    and highlightedArray a "done" list, so we can navigate back to them;
+  */
   var elObj = {};
   var highlightsArray = [];
+  var highlightedArray = [];
 
   /*
     loops through the elements argument, extracting/setting the properties
@@ -18,7 +23,6 @@ function walkthrough(elements){
     elObj.infoYPos = element.ypos || calcPosition(element).y;
     elObj.fromDirection = element.fromDirection || calcPosition(element).fromDirection;
     highlightsArray.push(elObj);
-    console.log(elObj);
   });
 
   /*
@@ -78,9 +82,9 @@ function walkthrough(elements){
     var isHighlighted = focus.className.indexOf('highlighted') >= 0;
 
     if (isHighlighted) {
+      removeInfoBox(element);
       toggleElementStyles(focus);
       focus.className = focus.className.replace(' highlighted', '');
-      removeInfoBox(element);
     } else {
       toggleElementStyles(focus);
       focus.className += ' highlighted';
@@ -112,9 +116,23 @@ function walkthrough(elements){
       infoBoxDiv.style.top = element.infoYPos + 'px';
       infoBoxDiv.style.zIndex = 9999;
       infoBoxDiv.style.margin = '15px';
-      infoBoxDiv.style.padding   = '15px';
+      infoBoxDiv.style.padding = '15px';
+      infoBoxDiv.style.minWidth = "25%";
+      infoBoxDiv.style.maxWidth = "50%";
 
-      infoBoxDiv.innerHTML = '<p>' + element.text + '</p>';
+      var infoBoxHTML = '';
+      infoBoxHTML = '<div><p>' + element.text + '</p></div><div>';
+
+      if (highlightedArray.length > 0) {
+        infoBoxHTML += '<button id="previous" class="previous-btn">Previous</button>';
+      }
+      if (highlightsArray.length <= 1) {
+        infoBoxHTML += '<button id="finished" class="finished-btn">Finished</button>';
+      } else {
+        infoBoxHTML += '<button id="next" class>Next</button>';
+      }
+
+      infoBoxDiv.innerHTML = infoBoxHTML;
 
       appendInfoBox(infoBoxDiv);
     }
@@ -129,7 +147,33 @@ function walkthrough(elements){
     infoBoxDiv.parentElement.removeChild(infoBoxDiv);
   }
 
-  toggleHighlight(highlightsArray.shift());
+  function changeHighlight(message) {
+    var current, next;
+
+    switch (message) {
+      case ('next'):
+        if (highlightedArray.length === 0) {
+          toggleHighlight(highlightsArray[0]);
+        } else {
+          current = highlightsArray.shift();
+          toggleHighlight(current);
+          highlightedArray.push(current);
+          next = highlightsArray[0];
+          toggleHighlight(next);
+        }
+        break;
+      case ('previous'):
+        toggleHighlight(highlightsArray[0]);
+        highlightsArray.unshift(highlightedArray.pop());
+        changeHighlight('next');
+        break;
+      case ('finished'):
+        toggleHighlight(highlightsArray[0]);
+        break;
+    }
+  }
+
+  changeHighlight('next');
 }
 
-walkthrough([{id: 'css', text:'Im some text'}]);
+walkthrough([{id: 'css', text:'Im some text'}, {id: 'html', text:'Im some html'}, {id : 'javascript', text: 'im some javascript'}]);
