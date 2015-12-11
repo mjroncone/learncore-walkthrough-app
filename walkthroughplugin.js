@@ -1,5 +1,4 @@
 function walkthrough(elements){
-
   /*
     arrays will contain ElementObjects, with highlightsArray being a todo list of sorts,
     and highlightedArray a "done" list, so we can navigate back to them;
