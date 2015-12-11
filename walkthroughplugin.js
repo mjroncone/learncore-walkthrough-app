@@ -24,7 +24,6 @@ function walkthrough(elements){
     newElement.infoYPos = element.ypos || calcPosition(element).y;
     newElement.fromDirection = element.fromDirection || calcPosition(element).fromDirection;
     highlightsArray.push(newElement);
-    console.log(highlightsArray);
   });
 
   /*
@@ -129,9 +128,9 @@ function walkthrough(elements){
         infoBoxHTML += '<button id="previous" class="previous-btn">Previous</button>';
       }
       if (highlightsArray.length <= 1) {
-        infoBoxHTML += '<button id="finished" class="finished-btn">Finished</button>';
+        infoBoxHTML += '<button id="finish" class="finish-btn">Finished</button>';
       } else {
-        infoBoxHTML += '<button id="next" class>Next</button>';
+        infoBoxHTML += '<button id="next" class="next-btn">Next</button>';
       }
 
       infoBoxDiv.innerHTML = infoBoxHTML;
@@ -142,7 +141,15 @@ function walkthrough(elements){
     function appendInfoBox(infoBoxDiv) {
       document.getElementsByTagName('body')[0].appendChild(infoBoxDiv);
 
-
+      if (document.getElementById('previous')) {
+        document.getElementById('previous').addEventListener('click', changeHighlight);
+      }
+      if (document.getElementById('next')) {
+        document.getElementById('next').addEventListener('click', changeHighlight);
+      }
+      if (document.getElementById('finish')) {
+        document.getElementById('finish').addEventListener('click', changeHighlight);
+      }
     }
   }
 
@@ -152,33 +159,31 @@ function walkthrough(elements){
   }
 
   function changeHighlight(message) {
-    var id = message || this.id;
-    var current, next;
+    var input = message;
+    var id = input.srcElement ? input.srcElement.id : input;
+    var current = highlightsArray[0];
+    var previous = highlightedArray[highlightedArray.length - 1];
+
 
     switch (id) {
 
       case ('next'):
-        // if this is the first element, bypass appending to past elements
-        if (highlightedArray.length === 0) {
-          toggleHighlight(highlightsArray[0]);
-        } else {
           // move the currently displayed box from the todo to done arrays;
-          current = highlightsArray.shift();
+          if (highlightedArray.length > 0){
+              toggleHighlight(previous);
+          }
           toggleHighlight(current);
-          highlightedArray.push(current);
-          next = highlightsArray[0];
-          toggleHighlight(next);
-        }
-        break;
+          highlightedArray.push(highlightsArray.shift());
+          break;
 
       case ('previous'):
-        toggleHighlight(highlightsArray[0]);
+        toggleHighlight(previous);
         highlightsArray.unshift(highlightedArray.pop());
-        changeHighlight('next');
+        toggleHighlight(highlightedArray[highlightedArray.length - 1]);
         break;
 
-      case ('finished'):
-        toggleHighlight(highlightsArray[0]);
+      case ('finish'):
+        toggleHighlight(previous);
         break;
     }
   }
