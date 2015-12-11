@@ -15,7 +15,7 @@ function walkthrough(elements){
     elObj.color = element.color || "#000";
     elObj.bgcolor = element.bgcolor || "#FFF";
     elObj.infoXPos = element.xpos || calcPosition(element).x;
-    elObj.infoYpos = element.ypos || calcPosition(element).y;
+    elObj.infoYPos = element.ypos || calcPosition(element).y;
     elObj.fromDirection = element.fromDirection || calcPosition(element).fromDirection;
     highlightsArray.push(elObj);
     console.log(elObj);
@@ -30,8 +30,9 @@ function walkthrough(elements){
     var focus = document.getElementById(element.id);
     var positionObj = {};
 
+    var elementPos = focus.getBoundingClientRect();
     var elementXPos = focus.offsetLeft;
-    var elementYPos = focus.offsetLeft;
+    var elementYPos = focus.offsetTop;
     var elementWidth = focus.offsetWidth;
     var elementHeight = focus.offsetHeight;
     var windowHorizontalMid = window.innerWidth / 2;
@@ -62,7 +63,7 @@ function walkthrough(elements){
       positionObj.fromDirection = "left";
     } else if (originTopQuads) {
       positionObj.x = elementXPos + elementWidth/2;
-      positionObj.y = elementYPos + elementHeight;
+      positionObj.y = elementYPos - elementHeight;
       positionObj.fromDirection = "bottom";
     } else if (!originTopQuads) {
       positionObj.x = elementXPos + elementWidth/2;
@@ -92,15 +93,29 @@ function walkthrough(elements){
 
   // creates the infobox HTML element that will be placed over the page
   function initInfoBox(element) {
+    createInfoBox(element);
 
-    function createInfoBox(element, focus) {
-      var infoBoxHTML = '<div class="info-box ' + element.id + '"style="';
-      infoBoxHTML += 'color:' + element.color + ';';
-      infoBoxHTML += 'background-color:' + element.bgcolor + ';';
-      infoBoxHTML += 'position: absolute;';
-      infoBoxHTML += 'left:' ;
+    function createInfoBox(element) {
+      var infoBoxDiv = document.createElement('div');
+
+      infoBoxDiv.className = element.name + ' infobox';
+
+      infoBoxDiv.style.color = element.color;
+      infoBoxDiv.style.backgroundColor = element.bgcolor;
+      infoBoxDiv.style.position = 'absolute';
+      infoBoxDiv.style.left = element.infoXPos + 'px';
+      infoBoxDiv.style.top = element.infoYPos + 'px';
+      infoBoxDiv.style.zIndex = 9999;
+
+      infoBoxDiv.innerHTML = '<p>' + element.text + '</p>';
+
+      appendInfoBox(infoBoxDiv);
+    }
+
+    function appendInfoBox(infoBoxDiv) {
+      document.getElementsByTagName('body')[0].appendChild(infoBoxDiv);
     }
   }
 
-  initHighlight(highlightsArray.shift());
+  toggleHighlight(highlightsArray.shift());
 }
