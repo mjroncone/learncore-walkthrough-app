@@ -165,33 +165,24 @@ function walkthrough(elements){
     var next = highlightsArray[1];
     var previous = highlightedArray[0];
 
+    // turns on the highlight in the initial run, but turns off in all other cases.
+    toggleHighlight(current);
+
     switch (id) {
 
       case ('next'):
-          toggleHighlight(current);
-
-          highlightedArray.unshift(highlightsArray.shift());
-
-          toggleHighlight(next);
         // move the currently displayed box from the todo to done arrays;
+        highlightedArray.unshift(highlightsArray.shift());
 
+        // turn on the next box
+        toggleHighlight(next);
         break;
 
       case ('previous'):
-        toggleHighlight(current);
-
         highlightsArray.unshift(highlightedArray.shift());
-        
+
         toggleHighlight(previous);
-        //toggleHighlight(highlightedArray[highlightedArray.length -1]);
         break;
-
-      case ('finish'):
-        toggleHighlight(current);
-        break;
-
-      case ('start'):
-        toggleHighlight(current);
     }
   }
 
