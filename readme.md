@@ -23,6 +23,12 @@ The module determines the best location for the information window based on elem
 
 Optionally, you can pass in additional key/value pairs in your objects of colorr, bgcolor, xpos, and ypos to manually set the style and location of the information windows.
 
+**Testing in Chrome Developer Tools**
+  - Open Chrome Dev tools and copy/paste the entire module into the console.
+  - Use the "Elements" panel to get the ids of some interesting elements.
+  - In console, make a call to walkthrough() with the ids you chose and some text for each passed in as an array of objects like above.
+  - Enjoy!
+
 ### Pending changes
 
  * I would like to make the module more customizable for users by passing in additional arguments.
