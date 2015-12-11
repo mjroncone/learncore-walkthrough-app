@@ -1,18 +1,56 @@
 function walkthrough(elements){
-  var InfoBox = {
-    name : "",
-    color : "black",
-    bgcolor : "white",
-    text : "",
-  };
+  var elObj = {};
 
-  var infoBoxArray = [];
+  var highlightsArray = [];
 
   elements.forEach(function(element) {
-    InfoBox.name = element.id;
-    InfoBox.text = element.text;
-    infoBoxArray.push(InfoBox);
+    elObj.name = element.id;
+    elObj.text = element.text;
+    elObj.color = element.color || "#000";
+    elObj.bgcolor = element.bgcolor || "#FFF";
+    elObj.infoXPos = element.xpos || calcPosition(element).x;
+    elObj.infoYpos = element.ypos || calcPosition(element).y;
+    elObj.fromDirection = element.fromDirection || calcPosition(element).fromDirection;
+    highlightsArray.push(elObj);
+    console.log(elObj);
   });
+
+  function calcPosition(element) {
+    var focus = document.getElementById(element.id);
+
+    var originX = focus.offsetLeft;
+    var originY = focus.offsetLeft;
+    var elWidth = focus.offsetWidth;
+    var elHeight = focus.offsetHeight;
+    var windowHorizontalMid = window.innerWidth / 2;
+    var windowVerticalMid = window.innerHeight / 2;
+
+    var positionObj = {};
+    var originLeftQuads = originX < windowHorizontalMid ? true : false;
+    var originTopQuads = originY < windowVerticalMid ? true : false;
+    var exclusiveLeftQuad =  originX + elWidth < windowVerticalMid ? true : false;
+
+    if (originLeftQuads && exclusiveLeftQuad) {
+      positionObj.x = originX + elWidth;
+      positionObj.y = originY + elHeight;
+      positionObj.fromDirection = "right";
+    } else if (!originLeftQuads) {
+      positionObj.x = originX;
+      positionObj.y = originY + elHeight;
+      positionObj.fromDirection = "left";
+    } else if (originTopQuads) {
+      positionObj.x = originX + elWidth/2;
+      positionObj.y = originY + elHeight;
+      positionObj.fromDirection = "bottom";
+    } else if (!originTopQuads) {
+      positionObj.x = originX + elWidth/2;
+      positionObj.y = originY;
+      positionObj.fromDirection = "top";
+    }
+
+  return positionObj;
+
+  }
 
   function initHighlight(element) {
     var focus = document.getElementById(element.name);
@@ -22,47 +60,21 @@ function walkthrough(elements){
     focus.style.zIndex = 9999;
     focus.style.boxShadow = '0 0 0 9999px rgba(0, 0, 0, 0.5)';
 
-    initInfoBox(element, focus);
+    initInfoBox(focus);
   }
 
   function initInfoBox(element, focus) {
-    var positionLeft = focus.offsetLeft;
-    var positionTop = focus.offsetLeft;
-    var elementWidth = focus.offsetWidth;
-    var elementHeight = focus.offsetHeight;
-    var windowHorizontalMid = window.innerWidth / 2;
-    var windowVerticalMid = window.innerHeight / 2;
 
-    function calcPosition(originX, originY, width, height) {
-      var positionObj = {};
-      var originLeftQuads = originX < windowHorizontalMid ? true : false;
-      var originTopQuads = originY < windowVerticalMid ? true : false;
-      var exclusiveLeftQuad =  originX + width < windowVerticalMid ? true : false;
-
-      if (originLeftQuads && exclusiveLeftQuad) {
-        positionObj.x = originX + width;
-        positionObj.y = originY + height/2;
-        positionObj.fromDirection = "right";
-      } else if (!originLeftQuads) {
-        positionObj.x = originX;
-        positionObj.y = originY + height/2;
-        positionObj.fromDirection = "left";
-      } else if (originTopQuads) {
-        positionObj.x = originX + width/2;
-        positionObj.y = originY + height;
-        positionObj.fromDirection = "bottom";
-      } else if (!originTopQuads) {
-        positionObj.x = originX + width/2;
-        positionObj.y = originY;
-        positionObj.fromDirection = "top";
-      }
-
-    return positionObj;
-
+    function createInfoBox(element, focus) {
+      var infoBoxHTML = '<div class="info-box ' + element.id + '"style="';
+      infoBoxHTML += 'color:' + element.color + ';';
+      infoBoxHTML += 'background-color:' + element.bgcolor + ';';
+      infoBoxHTML += 'position: absolute;';
+      infoBoxHTML += 'left:' ;
     }
 
 
   }
 
-  initHighlight(infoBoxArray.shift());
+  initHighlight(highlightsArray.shift());
 }
